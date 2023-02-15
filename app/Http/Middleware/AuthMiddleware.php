@@ -27,20 +27,32 @@ class AuthMiddleware
      */
     public function handle(Request $request, Closure $next): mixed
     {
+        $key = new Key(env("JWT_KEY"), 'HS256');
+        $header_refresh = request()->header(JwtTypeEnum::REFRESH->value);
+
         try {
-            $user = JWT::decode(request()->header(JwtTypeEnum::BEARER->value), new Key(env("JWT_KEY"), 'HS256'));
-            (new AuthenticationHelpers())->setCacheToken(request()->header(JwtTypeEnum::BEARER->value), request()->header(JwtTypeEnum::REFRESH->value));
-            Auth::loginUsingId($user->user_id);
+            $user = JWT::decode(request()->header(JwtTypeEnum::BEARER->value), $key);
+            (new AuthenticationHelpers())->setCacheToken(request()->header(JwtTypeEnum::BEARER->value), $header_refresh);
+            $this->loginUsingId($user->user_id);
             return $next($request);
         } catch (Throwable $e) {
             try {
-                $user = JWT::decode(request()->header(JwtTypeEnum::REFRESH->value), new Key(env("JWT_KEY"), 'HS256'));
-                (new AuthenticationHelpers())->setCacheToken((new JwtHelpers())->store(JwtTypeEnum::BEARER, $user->user_id), request()->header(JwtTypeEnum::REFRESH->value));
-                Auth::loginUsingId($user->user_id);
+                $user = JWT::decode(request()->header(JwtTypeEnum::REFRESH->value), $key);
+                (new AuthenticationHelpers())->setCacheToken((new JwtHelpers())->store(JwtTypeEnum::BEARER, $user->user_id), $header_refresh);
+                $this->loginUsingId($user->user_id);
                 return $next($request);
             } catch (Throwable $e) {
                 return $this->failMes("Geçersiz token")->send();
             }
         }
+    }
+
+    /**
+     * @param $id
+     * @return void
+     */
+    private function loginUsingId($id)
+    {
+        Auth::loginUsingId($id);
     }
 }
