@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthenticationController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -20,4 +21,9 @@ Route::name("users.")->prefix("users")->controller(UserController::class)->group
     Route::name("show")->get("{id}", "show");
     Route::name("update")->put("{id}", "update");
     Route::name("destroy")->delete("{id}", "destroy");
+});
+
+Route::name("authentication.")->prefix("authentication")->controller(AuthenticationController::class)->group(function () {
+    Route::name("login")->post("login", "login");
+    Route::name("show")->get("show", "show");
 });
