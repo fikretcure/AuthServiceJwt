@@ -20,7 +20,7 @@ class UserSeeder extends Seeder
             "surname" => "Cüre",
             "email" => "fikretcure@gmail.com",
             "password" => "Fikret-1234",
-            "reg_code" =>rand()
+            "email_verified_at" => now()
         ]);
 
         User::create([
@@ -28,7 +28,7 @@ class UserSeeder extends Seeder
             "surname" => "Cüre",
             "email" => "semihacure@gmail.com",
             "password" => "Fikret-1234",
-            "reg_code" =>rand()
+            "email_verified_at" => now()
         ]);
     }
 }
