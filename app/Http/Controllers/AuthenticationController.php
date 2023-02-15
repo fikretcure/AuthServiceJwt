@@ -35,13 +35,8 @@ class AuthenticationController extends Controller
     {
         $user = $this->user_repository->showByEmail($request->validated("email"));
         if (Hash::check($request->password, $user->password)) {
-
-//          Cache::put('key', 'value');
-
             Cache::put(JwtTypeEnum::BEARER->value, $jwt->store(JwtTypeEnum::BEARER));
             Cache::put(JwtTypeEnum::REFRESH->value, $jwt->store(JwtTypeEnum::REFRESH));
-
-
             return $this->success()->send();
         }
         return $this->failMes("Kullanıcı Bilgilerini Tekrar Girerek Deneyiniz !")->send();
@@ -53,7 +48,5 @@ class AuthenticationController extends Controller
     public function show(): JsonResponse
     {
         return $this->success()->send();
-
-        return $this->success(Auth::user())->send();
     }
 }
