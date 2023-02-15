@@ -9,6 +9,7 @@ use App\Helpers\JwtHelpers;
 use App\Http\Repositories\UserRepository;
 use App\Http\Requests\AuthenticationLoginRequest;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 /**
@@ -45,6 +46,6 @@ class AuthenticationController extends Controller
      */
     public function show(): JsonResponse
     {
-        return $this->success()->send();
+        return $this->success($this->user_repository->show(Auth::id()))->send();
     }
 }
