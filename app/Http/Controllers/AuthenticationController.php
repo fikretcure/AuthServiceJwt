@@ -45,10 +45,6 @@ class AuthenticationController extends Controller
      */
     public function show(): JsonResponse
     {
-        (new AuthenticationHelpers())->setCacheToken(request()->header(JwtTypeEnum::BEARER->value), request()->header(JwtTypeEnum::REFRESH->value));
-        return $this->success([
-            JwtTypeEnum::BEARER->value => request()->header("bearer"),
-            JwtTypeEnum::REFRESH->value => request()->header("refresh"),
-        ])->send();
+        return $this->success()->send();
     }
 }
