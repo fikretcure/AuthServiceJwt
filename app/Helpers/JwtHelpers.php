@@ -29,7 +29,8 @@ class JwtHelpers
 
     /**
      * @param $type
-     * @param $remember_me
+     * @param $user_id
+     * @param null $remember_me
      * @return string
      */
     public function store($type, $user_id, $remember_me = null): string
@@ -43,8 +44,8 @@ class JwtHelpers
         $payload = [
             'iss' => env("APP_URL"),
             'aud' => env("APP_URL"),
-            'iat' => now(),
-            'exp' => $exp,
+            'iat' => now()->timestamp,
+            'exp' => ($exp)->timestamp,
             'user_id' => $user_id
         ];
 
