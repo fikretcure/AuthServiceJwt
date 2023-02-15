@@ -32,7 +32,7 @@ class JwtHelpers
      * @param $remember_me
      * @return string
      */
-    public function store($type, $remember_me = null): string
+    public function store($type, $user_id, $remember_me = null): string
     {
         if ($type == JwtTypeEnum::BEARER) {
             $exp = now()->addMinutes(5);
@@ -44,7 +44,8 @@ class JwtHelpers
             'iss' => env("APP_URL"),
             'aud' => env("APP_URL"),
             'iat' => now(),
-            'exp' => $exp
+            'exp' => $exp,
+            'user_id' => $user_id
         ];
 
         return JWT::encode($payload, $this->secret_key, 'HS256');
