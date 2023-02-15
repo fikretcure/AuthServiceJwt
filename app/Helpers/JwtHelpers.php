@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Enums\JwtTypeEnum;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
@@ -33,9 +34,9 @@ class JwtHelpers
      */
     public function store($type, $remember_me = null): string
     {
-        if ($type == "bearer") {
+        if ($type == JwtTypeEnum::BEARER) {
             $exp = now()->addMinutes(5);
-        } else if ($type == "refresh") {
+        } else if ($type == JwtTypeEnum::REFRESH) {
             $exp = !$remember_me ? now()->addHours(5) : now()->addDays(5);
         }
 
