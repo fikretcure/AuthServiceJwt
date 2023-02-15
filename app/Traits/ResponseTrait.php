@@ -2,7 +2,9 @@
 
 namespace App\Traits;
 
+use App\Enums\JwtTypeEnum;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Cache;
 
 /**
  *
@@ -96,8 +98,8 @@ trait ResponseTrait
             "message" => $this->message ?? null,
             "data" => $this->data ?? null,
         ], $this->status)->withHeaders([
-            "bearrer" => request()->bearrer,
-            "refresh" => request()->refresh,
+            JwtTypeEnum::BEARER->value => Cache::get(JwtTypeEnum::BEARER->value),
+            JwtTypeEnum::REFRESH->value => Cache::get(JwtTypeEnum::REFRESH->value),
         ]);
 
     }
