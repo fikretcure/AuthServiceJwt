@@ -4,13 +4,12 @@ namespace App\Http\Controllers;
 
 
 use App\Enums\JwtTypeEnum;
+use App\Helpers\AuthenticationHelpers;
 use App\Helpers\JwtHelpers;
 use App\Http\Repositories\UserRepository;
 use App\Http\Requests\AuthenticationLoginRequest;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Cache;
 
 /**
  *
@@ -35,8 +34,7 @@ class AuthenticationController extends Controller
     {
         $user = $this->user_repository->showByEmail($request->validated("email"));
         if (Hash::check($request->password, $user->password)) {
-            Cache::put(JwtTypeEnum::BEARER->value, $jwt->store(JwtTypeEnum::BEARER, $user->id));
-            Cache::put(JwtTypeEnum::REFRESH->value, $jwt->store(JwtTypeEnum::REFRESH, $user->id));
+            (new AuthenticationHelpers())->setCacheToken($jwt->store(JwtTypeEnum::BEARER, $user->id), $jwt->store(JwtTypeEnum::REFRESH, $user->id));
             return $this->success()->send();
         }
         return $this->failMes("Kullanıcı Bilgilerini Tekrar Girerek Deneyiniz !")->send();
@@ -47,6 +45,10 @@ class AuthenticationController extends Controller
      */
     public function show(): JsonResponse
     {
-        return $this->success()->send();
+        (new AuthenticationHelpers())->setCacheToken(request()->header(JwtTypeEnum::BEARER->value), request()->header(JwtTypeEnum::REFRESH->value));
+        return $this->success([
+            JwtTypeEnum::BEARER->value => request()->header("bearer"),
+            JwtTypeEnum::REFRESH->value => request()->header("refresh"),
+        ])->send();
     }
 }

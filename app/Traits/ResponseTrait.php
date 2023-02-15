@@ -93,14 +93,19 @@ trait ResponseTrait
     {
         $this->status = $status ? $status : $this->status;
 
+        $bearer = Cache::get(JwtTypeEnum::BEARER->value);
+        $refresh = Cache::get(JwtTypeEnum::REFRESH->value);
+
+        Cache::put(JwtTypeEnum::BEARER->value, null);
+        Cache::put(JwtTypeEnum::REFRESH->value, null);
+
         return response()->json([
             "info" => null,
             "message" => $this->message ?? null,
             "data" => $this->data ?? null,
         ], $this->status)->withHeaders([
-            JwtTypeEnum::BEARER->value => Cache::get(JwtTypeEnum::BEARER->value),
-            JwtTypeEnum::REFRESH->value => Cache::get(JwtTypeEnum::REFRESH->value),
+            JwtTypeEnum::BEARER->value => $bearer,
+            JwtTypeEnum::REFRESH->value => $refresh,
         ]);
-
     }
 }
