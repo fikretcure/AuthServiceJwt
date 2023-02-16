@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use App\Enums\JwtTypeEnum;
+use App\Enums\RouteNameEnum;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
 
@@ -91,7 +92,7 @@ trait ResponseTrait
      */
     public function send(int $status = null): JsonResponse
     {
-        $this->status = $status ? $status : $this->status;
+        $this->status = $status ?? $this->status;
 
         $bearer = Cache::get(JwtTypeEnum::BEARER->value);
         $refresh = Cache::get(JwtTypeEnum::REFRESH->value);
@@ -100,7 +101,7 @@ trait ResponseTrait
         Cache::put(JwtTypeEnum::REFRESH->value, null);
 
         return response()->json([
-            "info" => null,
+            "info" => RouteNameEnum::generateInfoMes(request()->route()->getName()) . " " . $this->info_message,
             "message" => $this->message ?? null,
             "data" => $this->data ?? null,
         ], $this->status)->withHeaders([
