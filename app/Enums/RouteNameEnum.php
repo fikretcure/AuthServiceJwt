@@ -45,13 +45,14 @@ enum RouteNameEnum: string
     public static function getRouteNames(): mixed
     {
         return collect(Route::getRoutes()->get())->map(function ($item, $key) {
-            if (collect($item->action["middleware"])->contains(AuthMiddleware::class)) {
-                return [
-                    "slug" => $item->action["as"],
-                    "name" => self::generateInfoMes($item->action["as"])
-                ];
+            if ($item->action["middleware"] ?? null) {
+                if (collect($item->action["middleware"])->contains(AuthMiddleware::class)) {
+                    return [
+                        "slug" => $item->action["as"],
+                        "name" => self::generateInfoMes($item->action["as"])
+                    ];
+                };
             }
-            return null;
         })->filter()->values();
     }
 
